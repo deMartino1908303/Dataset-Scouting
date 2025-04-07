@@ -22,30 +22,6 @@ CREATE TABLE restaurants (
     rating_text TEXT,
     votes INT
 );
--- Create table for whole dataset
-CREATE TABLE restaurants (
-    restaurant_id INT PRIMARY KEY,
-    restaurant_name TEXT,
-    country_code INT,
-    city TEXT,
-    address TEXT,
-    locality TEXT,
-    locality_verbose TEXT,
-    longitude FLOAT,
-    latitude FLOAT,
-    cuisines TEXT,
-    average_cost_for_two INT,
-    currency TEXT,
-    has_table_booking BOOLEAN,
-    has_online_delivery BOOLEAN,
-    is_delivering_now BOOLEAN,
-    switch_to_order_menu BOOLEAN,
-    price_range INT,
-    aggregate_rating FLOAT,
-    rating_color TEXT,
-    rating_text TEXT,
-    votes INT
-);
 -- Copy data from CSV File to Table
 COPY restaurants (
     restaurant_id, 
@@ -78,7 +54,7 @@ CSV HEADER;
 CREATE TABLE countries (
     country_code INT PRIMARY KEY,
     country TEXT
-)
+);
 
 -- Address Table
 CREATE TABLE restaurant_address (
@@ -147,7 +123,7 @@ DROP COLUMN latitude;
 
 -- Check if data have been imported correctly
 SELECT * FROM restaurants
-SELECT * FROM countries
+-- SELECT * FROM countries
 
 -- Test Join
 SELECT restaurant_name, city, country
