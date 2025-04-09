@@ -23,7 +23,7 @@ CREATE TABLE restaurants (
     votes INT
 );
 -- Copy data from CSV File to Table
-COPY restaurants (
+copy restaurants (
     restaurant_id, 
     restaurant_name, 
     country_code, 
@@ -46,7 +46,7 @@ COPY restaurants (
     rating_text, 
     votes
 ) 
-FROM '/tmp/new_dataset.csv' 
+FROM 'C:\Users\Public\DM_data\new_dataset.csv' 
 DELIMITER ',' 
 CSV HEADER;
 
@@ -55,6 +55,14 @@ CREATE TABLE countries (
     country_code INT PRIMARY KEY,
     country TEXT
 );
+
+COPY countries (
+    country_code,
+    country
+)
+FROM 'C:\Users\Public\DM_data\Country-Code.csv'
+DELIMITER ','
+CSV HEADER;
 
 -- Address Table
 CREATE TABLE restaurant_address (
@@ -100,13 +108,28 @@ INSERT INTO rating (restaurant_id, price_range, aggregate_rating, rating_color, 
 SELECT restaurant_id, price_range, aggregate_rating, rating_color, rating_text, votes
 FROM restaurants;
 
-COPY countries (
-    country_code,
-    country
-)
-FROM '/tmp/Country-Code.csv'
-DELIMITER ','
-CSV HEADER;
+-- add currency info to the rating
+ALTER TABLE rating ADD COLUMN currency TEXT;
+
+UPDATE rating
+SET currency = r.currency
+FROM restaurants r
+WHERE rating.restaurant_id = r.restaurant_id;
+
+-- verify if the column is added correctly
+SELECT currency, restaurant_id from rating;
+
+
+-- add currency info to the adress
+ALTER TABLE restaurant_address ADD COLUMN currency TEXT;
+
+UPDATE restaurant_address
+SET currency = r.currency
+FROM restaurants r
+WHERE restaurant_address.restaurant_id = r.restaurant_id;
+
+-- verify if the column is added correctly
+SELECT currency, restaurant_id from restaurant_address;
 
 ALTER TABLE restaurants 
 DROP COLUMN country_code, 
@@ -115,40 +138,22 @@ DROP COLUMN address,
 DROP COLUMN locality, 
 DROP COLUMN locality_verbose, 
 DROP COLUMN longitude, 
-DROP COLUMN latitude, 
-DROP COLUMN longitude, 
-DROP COLUMN ave, 
-DROP COLUMN longitude, 
-DROP COLUMN latitude;
+DROP COLUMN latitude,
+DROP COLUMN currency,
+DROP COLUMN has_table_booking, 
+DROP COLUMN has_online_delivery, 
+DROP COLUMN is_delivering_now, 
+DROP COLUMN switch_to_order_menu,
+DROP COLUMN price_range,
+DROP COLUMN aggregate_rating,
+DROP COLUMN rating_color,
+DROP COLUMN rating_text,
+DROP COLUMN votes;
+
 
 -- Check if data have been imported correctly
-SELECT * FROM restaurants
--- SELECT * FROM countries
-
--- Test Join
-SELECT restaurant_name, city, country
-FROM restaurants r JOIN countries c on r.country_code = c.country_code
-WHERE price_range > 3
-
 SELECT * FROM restaurants;
 SELECT * FROM coordinates;
 SELECT * FROM countries;
 SELECT * FROM rating;
 SELECT * FROM restaurant_address;
-
-EXPLAIN ANALYZE
-SELECT r.restaurant_name, a.city, c.country, r.cuisines
-FROM restaurants r
-JOIN restaurant_address a ON r.restaurant_id = a.restaurant_id
-JOIN countries c ON a.country_code = c.country_code
-WHERE r.cuisines ILIKE '%Italian%' OR r.cuisines ILIKE '%Japanese%';
-
-CREATE INDEX idx_cuisines ON restaurants (cuisines);
-
-EXPLAIN ANALYZE
-SELECT r.restaurant_name, a.city, c.country, r.cuisines
-FROM restaurants r
-JOIN restaurant_address a ON r.restaurant_id = a.restaurant_id
-JOIN countries c ON a.country_code = c.country_code
-WHERE r.cuisines LIKE 'Italian%' OR r.cuisines LIKE 'Japanese%';
-
