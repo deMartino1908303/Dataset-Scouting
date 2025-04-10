@@ -64,7 +64,7 @@ COPY countries (
     country_code,
     country
 )
-FROM 'C:\Users\Public\DM_data\Country-Code.csv'
+FROM '/tmp/Country-Code.csv'
 DELIMITER ',' 
 CSV HEADER;
 
@@ -119,9 +119,8 @@ INSERT INTO rating (restaurant_id, price_range, aggregate_rating, rating_color, 
 SELECT restaurant_id, price_range, aggregate_rating, rating_color, rating_text, votes, currency
 FROM restaurants;
 
--- Verify if the 'currency' column is added correctly to rating and restaurant_address tables
+-- Verify if the 'currency' column is added correctly to rating tables
 SELECT currency, restaurant_id FROM rating;
-SELECT currency, restaurant_id FROM restaurant_address;
 
 -- Drop redundant columns from the main restaurants table
 ALTER TABLE restaurants 
