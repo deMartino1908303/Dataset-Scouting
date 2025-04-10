@@ -1,3 +1,13 @@
+-- FRESH START OF SETUP
+DROP TABLE IF EXISTS rating CASCADE;
+DROP TABLE IF EXISTS coordinates CASCADE;
+DROP TABLE IF EXISTS restaurant_address CASCADE;
+DROP TABLE IF EXISTS restaurants CASCADE;
+DROP TABLE IF EXISTS countries CASCADE;
+
+
+
+
 -- Create the main 'restaurants' table
 CREATE TABLE restaurants (
     restaurant_id INT PRIMARY KEY,
@@ -48,7 +58,7 @@ COPY restaurants (
     rating_text, 
     votes
 )
-FROM '/tmp/new_dataset.csv'
+FROM 'C:\Users\Public\DM_data\new_dataset.csv'
 DELIMITER ',' 
 CSV HEADER;
 
@@ -64,7 +74,7 @@ COPY countries (
     country_code,
     country
 )
-FROM '/tmp/Country-Code.csv'
+FROM 'C:\Users\Public\DM_data\Country-Code.csv'
 DELIMITER ',' 
 CSV HEADER;
 
@@ -133,7 +143,6 @@ DROP COLUMN longitude,
 DROP COLUMN latitude,
 DROP COLUMN currency,
 DROP COLUMN has_table_booking, 
-DROP COLUMN has_online_delivery, 
 DROP COLUMN is_delivering_now, 
 DROP COLUMN switch_to_order_menu,
 DROP COLUMN price_range,
